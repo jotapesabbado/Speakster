@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> frases;
     private ArrayList<Integer>ids;
 
+    //batata
+
 
 
     @Override
