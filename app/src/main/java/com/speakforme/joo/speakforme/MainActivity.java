@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             ids= new ArrayList<>();
             frases = new ArrayList<String>();
-            adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_2, android.R.id.text1,frases);
+            adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
             listView.setAdapter(adapter);
 
             Cursor cursor = banco.rawQuery("SELECT * FROM frases ORDER BY id DESC",null);
