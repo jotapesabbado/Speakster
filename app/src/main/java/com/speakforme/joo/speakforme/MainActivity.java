@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<String> frases;
     private ArrayList<Integer>ids;
 
+
+    private EditText texto1;
+
     //feijao
 
 
@@ -73,8 +76,13 @@ public class MainActivity extends AppCompatActivity {
                 salvarFrases(texto);
                 textToSpeech.speak(texto,TextToSpeech.QUEUE_FLUSH,null);
 
+
             }
         });
+
+
+
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -111,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             ids= new ArrayList<>();
             frases = new ArrayList<String>();
-            adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
+            adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.alist_adapter, R.id.texto1,frases);
             listView.setAdapter(adapter);
 
             Cursor cursor = banco.rawQuery("SELECT * FROM frases ORDER BY id DESC",null);
