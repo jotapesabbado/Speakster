@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#A7bA82</color>
+    <color name="backgroundColor">#A7bA82</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#8AA357</color>
+    <color name="DarkGreen">#8AA357</color>
+    <color name="BotaoPressed">#4a582f</color>
+    <color name="DrakGrey">#797979</color>
+    <color name="LightGrey">#E5E6E8</color>
+    <color name="White">#FFFFFF</color>
+    <color name="Black">#000000</color>
 </resources>

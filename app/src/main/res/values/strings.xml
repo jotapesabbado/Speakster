@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">SpeakforMe</string>
-    <string name="botao">BATATA</string>
-</resources>
+    <string name="app_name">Speakster</string>
+    <string name="botao">Falar</string>
+    <string name="seg">Seg</string>
+    <string name="ter">Ter</string>
+    <string name="qua">Qua</string>
+    <string name="qui">Qui</string>
+    <string name="sex">Sex</string>
+    <string name="sab">Sab</string>
+    <string name="dom">Dom</string>
+    </resources>
