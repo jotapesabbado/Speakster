@@ -1,18 +1,10 @@
 package com.speakforme.joo.speakforme;
 
-import android.app.Service;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.media.audiofx.BassBoost;
-import android.media.audiofx.Equalizer;
-import android.media.audiofx.Virtualizer;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.Voice;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -22,9 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -47,19 +38,46 @@ public class MainActivity extends AppCompatActivity {
     private Locale local;
     private Intent intent;
     private Intent intent1;
+    private int RESULTADO_OK = 1;
 
+    private boolean CONFIGURACOES_ALTERADAS =false;
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+
+        if(CONFIGURACOES_ALTERADAS && hasFocus){
+            Log.e("RES","/batata");
+
+            this.recreate();
+
+            CONFIGURACOES_ALTERADAS=false;
+           // this.finish();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==RESULTADO_OK){
+            CONFIGURACOES_ALTERADAS = true;
+
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
        // button = (Button)findViewById(R.id.button);
 
         botaoFala = (ImageButton)findViewById(R.id.buttonFala);
         botaoAdd = (ImageButton)findViewById(R.id.buttonAdd);
         botaoBack = (ImageButton)findViewById(R.id.buttonBack);
         botaoConf = (Button)findViewById(R.id.conf);
+
         editText = (EditText)findViewById(R.id.editText);
         listView = (ListView)findViewById(R.id.list);
         criarBanco();
@@ -74,9 +92,11 @@ public class MainActivity extends AppCompatActivity {
                intent = new Intent();
                intent.setAction("com.android.settings.TTS_SETTINGS");
                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-               startActivity(intent);
+               startActivityForResult(intent,RESULTADO_OK);
            }
        });
+
+
 
 
 

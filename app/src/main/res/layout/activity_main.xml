@@ -27,6 +27,7 @@
         android:textColor="@color/White"
         android:textSize="@dimen/imputtext"/>
 
+
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
