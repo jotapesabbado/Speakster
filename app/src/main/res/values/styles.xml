@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="MySwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/DarkGreen</item>
+    </style>
+
 </resources>

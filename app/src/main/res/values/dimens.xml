@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="imputtext">18sp</dimen>
+    <dimen name="listtext">18sp</dimen>
+    <dimen name="daysize">12sp</dimen>
+</resources>

@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/backgroundColor"
+
+    >
 
 
 
@@ -14,26 +17,74 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="35dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
         android:ems="10"
-        android:inputType="textPersonName"
-        android:text="" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        android:text="@string/botao"/>
+        android:inputType="textMultiLine"
+        android:text=""
+        android:backgroundTint="@color/White"
+        android:textColor="@color/White"
+        android:textSize="@dimen/imputtext"/>
 
 
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/buttonBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="176dp" />
+        android:layout_marginTop="15dp" />
+
+    <LinearLayout
+        android:id="@+id/buttonBar"
+        android:layout_marginTop="25dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/editText"
+        android:gravity="center"
+        >
+
+        <ImageButton
+            android:id="@+id/buttonBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/circle"
+            android:foreground="@android:drawable/ic_media_previous"
+            android:foregroundGravity="center"
+             />
+
+        <ImageButton
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle"
+        android:foreground="@android:drawable/ic_input_add"
+        android:foregroundGravity="center"
+        android:layout_margin="10dp"
+        android:foregroundTint="@color/White" />
+
+        <ImageButton
+        android:id="@+id/buttonFala"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/circle"
+        android:foreground="@android:drawable/ic_media_play"
+
+        android:foregroundGravity="center" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/conf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="36dp"
+        android:text="CONF" />
+
+
 </RelativeLayout>
