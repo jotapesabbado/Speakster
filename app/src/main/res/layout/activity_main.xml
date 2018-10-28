@@ -5,9 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:background="@color/White"
-
+    android:background="@color/backgroundColor"
     >
+
+    <RelativeLayout android:id="@+id/barraconf"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            />
+
+        <ImageButton
+            android:id="@+id/conf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
+
+            android:background="@drawable/ic_settings_black_24dp"/>
+
+    </RelativeLayout>
 
 
 
@@ -15,10 +37,10 @@
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_below="@id/barraconf"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="10dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
         android:ems="10"
         android:inputType="textMultiLine"
@@ -77,14 +99,7 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/conf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="36dp"
-        android:text="CONF" />
+
 
 
 </RelativeLayout>

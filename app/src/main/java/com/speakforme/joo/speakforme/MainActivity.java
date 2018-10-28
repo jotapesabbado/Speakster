@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton botaoFala;
     private ImageButton botaoAdd;
     private ImageButton botaoBack;
-    private Button botaoConf;
+    private ImageButton botaoConf;
     //private Button button;
     private TextToSpeech textToSpeech;
     private TextToSpeech textToSpeech2;
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         botaoFala = (ImageButton)findViewById(R.id.buttonFala);
         botaoAdd = (ImageButton)findViewById(R.id.buttonAdd);
         botaoBack = (ImageButton)findViewById(R.id.buttonBack);
-        botaoConf = (Button)findViewById(R.id.conf);
+        botaoConf = (ImageButton) findViewById(R.id.conf);
 
         editText = (EditText)findViewById(R.id.editText);
         listView = (ListView)findViewById(R.id.list);
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     String texto = cursor.getString(cursor.getColumnIndex("frase"));
 
                     Log.i("TEXTO",texto);
-                    //textToSpeech.speak(texto, TextToSpeech.QUEUE_FLUSH, null);
+                    textToSpeech.speak(texto, TextToSpeech.QUEUE_FLUSH, null);
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
