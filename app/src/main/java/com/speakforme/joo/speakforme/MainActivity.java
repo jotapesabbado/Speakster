@@ -1,19 +1,31 @@
 package com.speakforme.joo.speakforme;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton botaoFala;
     private ImageButton botaoAdd;
     private ImageButton botaoBack;
-    private ImageButton botaoConf;
+  //  private ImageButton botaoConf;
     //private Button button;
     private TextToSpeech textToSpeech;
     private TextToSpeech textToSpeech2;
@@ -39,8 +51,29 @@ public class MainActivity extends AppCompatActivity {
     private Intent intent;
     private Intent intent1;
     private int RESULTADO_OK = 1;
+    private Dialog dialogo;
 
     private boolean CONFIGURACOES_ALTERADAS =false;
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.button_conf:
+                intent = new Intent();
+                intent.setAction("com.android.settings.TTS_SETTINGS");
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivityForResult(intent,RESULTADO_OK);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -71,12 +104,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // LOGO DA ACTION BAR
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.drawable.ic_settings_black_24dp);
+
+
+
+        //DIALOGO
+        dialogo = new Dialog(this);
+
+
        // button = (Button)findViewById(R.id.button);
 
         botaoFala = (ImageButton)findViewById(R.id.buttonFala);
         botaoAdd = (ImageButton)findViewById(R.id.buttonAdd);
         botaoBack = (ImageButton)findViewById(R.id.buttonBack);
-        botaoConf = (ImageButton) findViewById(R.id.conf);
+      //  botaoConf = (ImageButton) findViewById(R.id.conf);
 
         editText = (EditText)findViewById(R.id.editText);
         listView = (ListView)findViewById(R.id.list);
@@ -84,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         recuperarFrases();
 
 
-       botaoConf.setOnClickListener(new View.OnClickListener() {
+   /*    botaoConf.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
                //startActivity(new Intent(Service.));
@@ -96,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
            }
        });
 
-
+*/
 
 
 
@@ -127,6 +170,8 @@ public class MainActivity extends AppCompatActivity {
                 texto = editText.getText().toString();
                 salvarFrases(texto);
                 editText.setText("");
+
+                popup(v);
             }
         });
 
@@ -236,4 +281,22 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-}
+
+    public void popup(View view){
+        dialogo.setContentView(R.layout.tela_alarme);
+        /*txtclose =(TextView) myDialog.findViewById(R.id.txtclose);
+        txtclose.setText("M");
+        btnFollow = (Button) myDialog.findViewById(R.id.btnfollow);
+        txtclose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myDialog.dismiss();
+            }
+        }); */
+        dialogo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialogo.show();
+    }
+
+
+
+    }
