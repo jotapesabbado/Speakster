@@ -9,23 +9,15 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,10 +25,13 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+
+
     private EditText editText;
     private ImageButton botaoFala;
     private ImageButton botaoAdd;
     private ImageButton botaoBack;
+    private ImageButton listconf;
   //  private ImageButton botaoConf;
     //private Button button;
     private TextToSpeech textToSpeech;
@@ -49,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private String texto;
     private Locale local;
     private Intent intent;
-    private Intent intent1;
     private int RESULTADO_OK = 1;
     private Dialog dialogo;
 
@@ -106,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
         // LOGO DA ACTION BAR
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.drawable.ic_settings_black_24dp);
+        getSupportActionBar().setIcon(R.mipmap.ic_launcher_round);
 
 
 
@@ -120,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
         botaoAdd = (ImageButton)findViewById(R.id.buttonAdd);
         botaoBack = (ImageButton)findViewById(R.id.buttonBack);
       //  botaoConf = (ImageButton) findViewById(R.id.conf);
+        listconf = (ImageButton)findViewById(R.id.listconf);
 
         editText = (EditText)findViewById(R.id.editText);
         listView = (ListView)findViewById(R.id.list);
@@ -171,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 salvarFrases(texto);
                 editText.setText("");
 
-                popup(v);
+
             }
         });
 
@@ -193,6 +188,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+       /* listconf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup(v);
+            }
+        });*/
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -207,6 +209,8 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
+
+
             }
         });
 
@@ -215,11 +219,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    public void reconstroi() {
-        intent1 = getIntent();
-        finish();
-        startActivity(intent1);
-    }
+
 
     public Locale verificaLocal(){
 
@@ -246,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
             frases = new ArrayList<String>();
             adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
             listView.setAdapter(adapter);
+
 
             Cursor cursor = banco.rawQuery("SELECT * FROM frases ORDER BY id DESC",null);
 

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
-    android:background="@color/DrakGrey"
+    android:background="@color/White"
     >
 
     <TimePicker
@@ -11,20 +11,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:timePickerMode="spinner"
+        android:numbersBackgroundColor="@color/colorPrimary"
+        android:numbersInnerTextColor="@color/colorPrimary"
+        android:numbersSelectorColor="@color/colorPrimary"
+        android:numbersTextColor="@color/colorPrimary"
         />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/time_picker"
+        android:gravity="center"
+        android:padding="@dimen/margin_weekpiker"
+
 
         >
+
+
 
         <Button
             android:id="@+id/domingo"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="D" />
 
@@ -32,7 +41,7 @@
             android:id="@+id/segunda"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="S" />
 
@@ -40,7 +49,7 @@
             android:id="@+id/terca"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="T" />
 
@@ -48,7 +57,7 @@
             android:id="@+id/quarta"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="Q" />
 
@@ -56,7 +65,7 @@
             android:id="@+id/quinta"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="Q" />
 
@@ -64,7 +73,7 @@
             android:id="@+id/sexta"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="S" />
 
@@ -72,7 +81,7 @@
             android:id="@+id/sabado"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_margin="10dp"
+            android:layout_margin="@dimen/margin_weekpiker"
             android:background="@drawable/time_circle"
             android:text="S" />
 

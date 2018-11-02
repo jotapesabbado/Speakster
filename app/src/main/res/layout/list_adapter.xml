@@ -23,7 +23,7 @@
         android:textSize="@dimen/listtext" />
 
     <ImageButton
-        android:id="@+id/imageButton6"
+        android:id="@+id/listconf"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_below="@+id/texto1"
