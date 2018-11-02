@@ -1,41 +1,55 @@
 package com.speakforme.joo.speakforme;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
-
-
 
     private EditText editText;
     private ImageButton botaoFala;
     private ImageButton botaoAdd;
     private ImageButton botaoBack;
-    private ImageButton listconf;
   //  private ImageButton botaoConf;
     //private Button button;
     private TextToSpeech textToSpeech;
-    private TextToSpeech textToSpeech2;
     private SQLiteDatabase banco;
     private ListView listView;
     private ArrayAdapter<String> adapter;
@@ -45,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private Locale local;
     private Intent intent;
     private int RESULTADO_OK = 1;
-    private Dialog dialogo;
+  //  private Dialog dialogo;
+  //  private Dialog confirma_exclusao;
 
     private boolean CONFIGURACOES_ALTERADAS =false;
 
@@ -79,7 +94,6 @@ public class MainActivity extends AppCompatActivity {
             this.recreate();
 
             CONFIGURACOES_ALTERADAS=false;
-           // this.finish();
         }
     }
 
@@ -100,12 +114,14 @@ public class MainActivity extends AppCompatActivity {
 
         // LOGO DA ACTION BAR
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher_round);
+        getSupportActionBar().setIcon(R.drawable.ic_settings_black_24dp);
+
+
 
 
 
         //DIALOGO
-        dialogo = new Dialog(this);
+     //   dialogo = new Dialog(this);
 
 
        // button = (Button)findViewById(R.id.button);
@@ -114,10 +130,16 @@ public class MainActivity extends AppCompatActivity {
         botaoAdd = (ImageButton)findViewById(R.id.buttonAdd);
         botaoBack = (ImageButton)findViewById(R.id.buttonBack);
       //  botaoConf = (ImageButton) findViewById(R.id.conf);
-        listconf = (ImageButton)findViewById(R.id.listconf);
 
         editText = (EditText)findViewById(R.id.editText);
         listView = (ListView)findViewById(R.id.list);
+        ids= new ArrayList<>();
+        frases = new ArrayList<String>();
+     //   confirma_exclusao = new Dialog(this);
+
+
+
+
         criarBanco();
         recuperarFrases();
 
@@ -165,8 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 texto = editText.getText().toString();
                 salvarFrases(texto);
                 editText.setText("");
-
-
+                closeKeyboard();
             }
         });
 
@@ -188,13 +209,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-       /* listconf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popup(v);
-            }
-        });*/
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -209,17 +223,10 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception ex){
                     ex.printStackTrace();
                 }
-
-
             }
         });
 
     }
-
-
-
-
-
 
     public Locale verificaLocal(){
 
@@ -230,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
         try {
 
             banco = openOrCreateDatabase("banco", 0x0000, null);
-
+            //banco.execSQL("DROP TABLE frases");
             banco.execSQL("CREATE TABLE IF NOT EXISTS frases(id INTEGER PRIMARY KEY AUTOINCREMENT, frase VARCHAR)");
             //banco.execSQL("INSERT INTO frases (frase) VALUES(" + x + ")");
         }catch (Exception e){
@@ -240,14 +247,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
     private void recuperarFrases(){
         try{
-            ids= new ArrayList<>();
-            frases = new ArrayList<String>();
-            adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
+            adapter = new MyListAdapter(this,R.layout.list_adapter,frases);
             listView.setAdapter(adapter);
+            //adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
 
 
+            //listView.setAdapter(new MyListAdapter(this,R.layout.list_adapter,frases));
+
+            frases.clear();
+            ids.clear();
             Cursor cursor = banco.rawQuery("SELECT * FROM frases ORDER BY id DESC",null);
 
             cursor.moveToFirst();
@@ -283,9 +295,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void popup(View view){
+    /*  public void popup(View view){
         dialogo.setContentView(R.layout.tela_alarme);
-        /*txtclose =(TextView) myDialog.findViewById(R.id.txtclose);
+        txtclose =(TextView) myDialog.findViewById(R.id.txtclose);
         txtclose.setText("M");
         btnFollow = (Button) myDialog.findViewById(R.id.btnfollow);
         txtclose.setOnClickListener(new View.OnClickListener() {
@@ -293,11 +305,95 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 myDialog.dismiss();
             }
-        }); */
+        });
         dialogo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialogo.show();
+    }*/
+
+    private class MyListAdapter extends ArrayAdapter<String> {
+        private int layout;
+        public MyListAdapter(@NonNull Context context, int resource, @NonNull List<String> objects) {
+            super(context, resource, objects);
+            layout = resource;
+        }
+
+        @NonNull
+        @Override
+        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            ViewHolder mainViewHolder = null;
+
+            if (convertView == null){
+                LayoutInflater inflater = LayoutInflater.from(getContext());
+                convertView = inflater.inflate(layout, parent, false);
+
+                ViewHolder viewHolder = new ViewHolder();
+                viewHolder.delete_lista = (Button)convertView.findViewById(R.id.delete_lista);
+                viewHolder.texto_lista = (TextView)convertView.findViewById(R.id.texto_lista);
+
+                viewHolder.texto_lista.setText(frases.get(position));
+
+
+                viewHolder.delete_lista.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        confima_Exclusao(position);
+                        //banco.execSQL("delete from frases where frase=('" + frases.get(position) + "')");
+                        //adapter.clear();
+                        //recuperarFrases();
+
+                                            }
+                });
+
+
+                convertView.setTag(viewHolder);
+
+
+            }else {
+                mainViewHolder = (ViewHolder)convertView.getTag();
+                mainViewHolder.texto_lista.setText(getItem(position));
+
+            }
+
+            return convertView;
+        }
     }
 
-
-
+    public class ViewHolder{
+        TextView texto_lista;
+        Button delete_lista;
     }
+
+    public void closeKeyboard() {
+
+        View vies = this.getCurrentFocus();
+        if (vies != null) {
+            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(vies.getWindowToken(), 0);
+        }
+    }
+
+    public void confima_Exclusao(final int posicao) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(true);
+        builder.setTitle("Excluir");
+        builder.setMessage("Deseja realmente excluir a frase:"+frases.get(posicao));
+        builder.setPositiveButton("Confirma",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        banco.execSQL("delete from frases where frase=('" + frases.get(posicao) + "')");
+                        adapter.clear();
+                        recuperarFrases();
+                    }
+                });
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+}

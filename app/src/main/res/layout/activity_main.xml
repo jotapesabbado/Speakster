@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:background="@color/backgroundColor"
     >
-
-
-
-
 
     <EditText
         android:id="@+id/editText"
@@ -27,7 +25,6 @@
         android:backgroundTint="@color/White"
         android:textColor="@color/White"
         android:textSize="@dimen/imputtext"/>
-
 
     <ListView
         android:id="@+id/list"
@@ -73,12 +70,8 @@
         android:layout_margin="10dp"
         android:background="@drawable/circle"
         android:foreground="@android:drawable/ic_media_play"
-
         android:foregroundGravity="center" />
 
     </LinearLayout>
-
-
-
 
 </RelativeLayout>
