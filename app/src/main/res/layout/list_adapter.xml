@@ -3,162 +3,170 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:background="@color/backgroundColor"
+
 
     >
 
     <TextView
-        android:id="@+id/texto1"
-        android:layout_width="match_parent"
+        android:id="@+id/texto_lista"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_toStartOf="@+id/delete_lista"
+
         android:textColor="@color/White"
         android:textSize="@dimen/listtext" />
 
-    <ImageButton
-        android:id="@+id/imageButton6"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_below="@+id/texto1"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="8dp"
-        android:layout_toStartOf="@+id/switch1"
-        android:background="@android:drawable/ic_menu_preferences"
-        android:descendantFocusability="blocksDescendants"
-        android:scaleType="fitCenter"
-        android:tint="@color/White"
-        />
-
-    <Switch
-        android:id="@+id/switch1"
+    <Button
+        android:id="@+id/delete_lista"
         android:layout_width="wrap_content"
-        android:layout_height="45dp"
-        android:layout_below="@+id/texto1"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="13dp"
-        android:padding="0dp"
-        android:theme="@style/MySwitch"
-        />
+       >
 
-    <TextView
-        android:id="@+id/textviewDom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:text="@string/dom"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+    </Button>
 
-    <TextView
-        android:id="@+id/textviewSeg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/textviewDom"
-        android:text="@string/seg"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+    <!--    <ImageButton
+            android:id="@+id/imageButton6"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_below="@+id/texto1"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@+id/switch1"
+            android:background="@android:drawable/ic_menu_preferences"
+            android:descendantFocusability="blocksDescendants"
+            android:scaleType="fitCenter"
+            android:tint="@color/White"
+            />
 
-    <TextView
-        android:id="@+id/textviewTer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/textviewSeg"
-        android:text="@string/ter"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:layout_below="@+id/texto1"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="13dp"
+            android:padding="0dp"
+            android:theme="@style/MySwitch"
+            />
 
-    <TextView
-        android:id="@+id/textviewQua"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/textviewTer"
-        android:text="@string/qua"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        <TextView
+            android:id="@+id/textviewDom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/dom"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/textviewQui"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/textviewQua"
-        android:text="@string/qui"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        <TextView
+            android:id="@+id/textviewSeg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/textviewDom"
+            android:text="@string/seg"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/textviewSex"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@+id/textviewQui"
-        android:text="@string/sex"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        <TextView
+            android:id="@+id/textviewTer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/textviewSeg"
+            android:text="@string/ter"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
-    <TextView
-        android:id="@+id/textviewSab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_toEndOf="@id/textviewSex"
-        android:text="@string/sab"
-        android:textSize="@dimen/daysize"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        <TextView
+            android:id="@+id/textviewQua"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/textviewTer"
+            android:text="@string/qua"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
-    <EditText
-        android:id="@+id/editText3"
-        android:layout_width="50sp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/texto1"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="90dp"
-        android:layout_marginTop="3dp"
-        android:padding="0dp"
-        android:backgroundTint="@android:color/transparent"
-        android:ems="10"
-        android:inputType="time"
-        android:text="16:00" />
+        <TextView
+            android:id="@+id/textviewQui"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/textviewQua"
+            android:text="@string/qui"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
+        <TextView
+            android:id="@+id/textviewSex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/textviewQui"
+            android:text="@string/sex"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
 
+        <TextView
+            android:id="@+id/textviewSab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@id/textviewSex"
+            android:text="@string/sab"
+            android:textSize="@dimen/daysize"
+            android:textStyle="bold"
+            android:visibility="visible" />
+
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="50sp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/texto1"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="90dp"
+            android:layout_marginTop="3dp"
+            android:padding="0dp"
+            android:backgroundTint="@android:color/transparent"
+            android:ems="10"
+            android:inputType="time"
+            android:text="16:00" />
+
+    -->
 </RelativeLayout>
