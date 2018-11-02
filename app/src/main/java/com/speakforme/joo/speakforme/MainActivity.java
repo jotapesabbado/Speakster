@@ -4,9 +4,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         ids= new ArrayList<>();
         frases = new ArrayList<String>();
      //   confirma_exclusao = new Dialog(this);
+
 
 
 
@@ -327,8 +330,9 @@ public class MainActivity extends AppCompatActivity {
                 convertView = inflater.inflate(layout, parent, false);
 
                 ViewHolder viewHolder = new ViewHolder();
-                viewHolder.delete_lista = (Button)convertView.findViewById(R.id.delete_lista);
+                viewHolder.delete_lista = (ImageButton)convertView.findViewById(R.id.delete_lista);
                 viewHolder.texto_lista = (TextView)convertView.findViewById(R.id.texto_lista);
+
 
                 viewHolder.texto_lista.setText(frases.get(position));
 
@@ -360,7 +364,7 @@ public class MainActivity extends AppCompatActivity {
 
     public class ViewHolder{
         TextView texto_lista;
-        Button delete_lista;
+        ImageButton delete_lista;
     }
 
     public void closeKeyboard() {

@@ -6,29 +6,34 @@
     android:layout_height="wrap_content"
     android:descendantFocusability="blocksDescendants"
     android:background="@color/backgroundColor"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
 
 
     >
 
     <TextView
+        android:fontFamily="@font/eras_demi_itc"
         android:id="@+id/texto_lista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/delete_lista"
-
         android:textColor="@color/White"
         android:textSize="@dimen/listtext" />
 
-    <Button
+    <ImageButton
         android:id="@+id/delete_lista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-       >
+        android:layout_centerVertical="true"
+        android:backgroundTint="@android:color/transparent"
+        android:foreground="@drawable/ic_delete_black_24dp"
+        android:foregroundTint="@color/White"
+        android:padding="15dp">
 
-    </Button>
+    </ImageButton>
 
     <!--    <ImageButton
             android:id="@+id/imageButton6"
