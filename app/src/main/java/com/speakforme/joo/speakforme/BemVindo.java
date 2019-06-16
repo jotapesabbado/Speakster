@@ -7,10 +7,12 @@ import android.support.v7.app.AppCompatActivity;
 
 public class BemVindo extends AppCompatActivity {
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.tela_start);
+
         Thread thread = new Thread() {
             @Override
             public void run() {

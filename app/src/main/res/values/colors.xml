@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#A7bA82</color>
     <color name="backgroundColor">#A7bA82</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimaryDark">#8AA357</color>
     <color name="colorAccent">#8AA357</color>
     <color name="DarkGreen">#8AA357</color>
     <color name="BotaoPressed">#4a582f</color>

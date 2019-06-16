@@ -3,5 +3,6 @@
     <dimen name="imputtext">24sp</dimen>
     <dimen name="listtext">24sp</dimen>
     <dimen name="daysize">12sp</dimen>
+    <dimen name="logosize">80dp</dimen>
     <dimen name="margin_weekpiker">5dp</dimen>
 </resources>

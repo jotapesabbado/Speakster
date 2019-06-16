@@ -13,7 +13,7 @@
     >
 
     <TextView
-        android:fontFamily="@font/eras_demi_itc"
+
         android:id="@+id/texto_lista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

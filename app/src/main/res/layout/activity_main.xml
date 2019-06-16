@@ -7,12 +7,16 @@
     tools:context=".MainActivity"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@color/backgroundColor"
+    android:background="@color/backgroundColor">
 
-    >
+    <TextView
+        android:id="@+id/teste"
+        android:text="batatata"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <EditText
-        android:fontFamily="@font/eras_demi_itc"
+
         android:id="@+id/editText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

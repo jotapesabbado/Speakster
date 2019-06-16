@@ -3,10 +3,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
-    <item
+ <!--   <item
         android:id="@+id/button_conf"
         android:icon="@drawable/ic_settings_black_24dp"
         android:title="@string/conf_icon"
         app:showAsAction="always"
         />
+
+-->
+        <item
+        android:title="Home"
+        app:actionLayout="@layout/home_menu"
+        app:showAsAction="ifRoom"
+        />
+
+
 </menu>
