@@ -262,6 +262,40 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
+    public double calcMedia(ArrayList<Double> unix){
+        double totalSoma = 0;
+        for(Double valor : unix) {
+            totalSoma += valor;
+        }
+        return totalSoma / unix.size();
+    }
+    public double calcDesvioPadrao(ArrayList<Double> unix, String type){
+        double potencia = 0;
+        double totalPotencia = 0;
+        double dp = 0;
+        double media = calcMedia(unix);
+        double valorFinal = 0;
+
+        for(Double valor : unix) {
+            potencia = Math.pow(valor - media,2);
+            totalPotencia += potencia / unix.size();
+        }
+
+        dp = Math.sqrt(totalPotencia);
+        switch(type) {
+            case "DP":
+                valorFinal = dp;
+            case "MA":
+                valorFinal = media;
+            case "INICIO":
+                valorFinal = media - dp;
+            case "FIM":
+                valorFinal = media + dp;
+
+        }
+    return valorFinal;
+    }
+
 
     private void recuperarFrases(){
         try{
@@ -276,11 +310,32 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             banco.execSQL("drop table if exists distancia_pontos;");
             banco.execSQL("drop table if exists intervalo;");
 
-            banco.execSQL("CREATE temporary TABLE intervalo AS SELECT id_frase, strftime('%H:%M:%S',`dia_hora`)AS HORA ,CAST(strftime('%s',`dia_hora`)AS INTEGER) AS UNIX, CAST(strftime('%w',`dia_hora`)AS INTEGER) AS DIA FROM `ocorrencia` GROUP BY id_frase HAVING UNIX BETWEEN ((dateTIME(strftime('%s', 'now')) - 10800) - 7200) AND ((dateTIME(strftime('%s', 'now')) - 10800) + 7200) AND DIA=strftime('%w',datetime(dateTIME(strftime('%s', 'now')),'unixepoch'));");
+            banco.execSQL("CREATE TABLE intervalo AS SELECT id_frase, strftime('%H:%M:%S',dia_hora)AS HORA , CAST(strftime('%s',dia_hora)AS INTEGER) AS UNIX, CAST(strftime('%w',dia_hora)AS INTEGER) AS DIA FROM ocorrencia GROUP BY id HAVING UNIX BETWEEN ((strftime('%s', 'now') - 10800) - 7200) AND ((strftime('%s', 'now') - 10800) + 7200) AND DIA=strftime('%w',datetime(strftime('%s', 'now') - 10800,'unixepoch'));");
 
-            banco.execSQL("create temporary table if not exists intervalo_dp AS SELECT SQRT(SUM(POWER(UNIX - (SELECT AVG(UNIX) from intervalo),2)/(SELECT COUNT(*) FROM intervalo))) AS DP, DATETIME(AVG(UNIX), 'unixepoch', 'localtime') AS MA, datetime((AVG(UNIX)) + (SQRT(SUM(POWER(UNIX - (SELECT AVG(UNIX) FROM intervalo),2)) / (select COUNT(*) from intervalo) )),'unixepoch', 'localtime') AS FIM, datetime((AVG(UNIX)) - (SQRT(SUM(POWER(UNIX - (SELECT AVG(UNIX) FROM intervalo),2)) / (select COUNT(*) FROM intervalo))),'unixepoch', 'localtime' ) AS INICIO FROM intervalo");
+//            Cursor tabelaOcorencia = banco.rawQuery("SELECT * FROM intervalo",null);
+//            tabelaOcorencia.moveToFirst();
+//            while (tabelaOcorencia!=null){
+//                Log.e("id_frase",":"+tabelaOcorencia.getInt(tabelaOcorencia.getColumnIndex("id_frase")));
+//                Log.e("HORA",":"+tabelaOcorencia.getDouble(tabelaOcorencia.getColumnIndex("HORA")));
+//                Log.e("UNIX",":"+tabelaOcorencia.getDouble(tabelaOcorencia.getColumnIndex("UNIX")));
+//                Log.e("DIA",":"+tabelaOcorencia.getInt(tabelaOcorencia.getColumnIndex("DIA")));
+//                tabelaOcorencia.moveToNext();
+//            }
+            banco.execSQL("create table if not exists intervalo_dp (DP DOUBLE NOT NULL, MA TIMESTAMP NOT NULL,FIM TIMESTAMP NOT NULL, INICIO TIMESTAMP NOT NULL )");
+            Cursor cursor_intervalo = banco.rawQuery("SELECT UNIX FROM intervalo",null);
+            cursor_intervalo.moveToFirst();
+            ArrayList<Double> unix = new ArrayList<>();
+            try {
+                while (cursor_intervalo != null) {
+                    unix.add(cursor_intervalo.getDouble(cursor_intervalo.getColumnIndex("UNIX")));
+                    cursor_intervalo.moveToNext();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            banco.execSQL("INSERT INTO intervalo_dp(DP, MA, INICIO, FIM) VALUES ("+ calcDesvioPadrao(unix,"DP")+",DATETIME(" + calcDesvioPadrao(unix,"MA") + ", 'unixepoch', 'localtime'),DATETIME(" + calcDesvioPadrao(unix,"INICIO") + ", 'unixepoch', 'localtime'),DATETIME(" + calcDesvioPadrao(unix,"FIM") + ", 'unixepoch', 'localtime'))");
 
-            banco.execSQL("CREATE temporary TABLE if not exists ocorrencia_id (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, maior_id INTEGER NOT NULL);");
+            banco.execSQL("CREATE TABLE if not exists ocorrencia_id (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, maior_id INTEGER NOT NULL);");
             banco.execSQL("INSERT INTO ocorrencia_id(maior_id) SELECT id as maior_id FROM ocorrencia group by id_frase having count(*) = (SELECT count(id_frase) as maior FROM ocorrencia GROUP BY id_frase order by maior desc limit 1);");
 
             banco.execSQL("CREATE TABLE if not exists pontos_hora (pontos INTEGER DEFAULT 10, HORA NOT NULL, id_frase INTEGER NOT NULL);");
@@ -289,18 +344,23 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             banco.execSQL("CREATE TABLE if not exists pontos_hora_a AS SELECT intervalo.HORA, intervalo.id_frase FROM intervalo,intervalo_dp WHERE intervalo.UNIX BETWEEN (strftime('%s' ,intervalo_dp.INICIO) + (intervalo_dp.DP / 2)) AND (strftime('%s' ,intervalo_dp.FIM) - (intervalo_dp.DP / 2)) group by intervalo.id_frase");
             banco.execSQL("ALTER TABLE pontos_hora_a ADD pontos INTEGER DEFAULT 40;");
 
-            banco.execSQL("CREATE temporary TABLE if not exists distancia_pontos (id_frase INTEGER NOT NULL, DISTANCIA double NOT NULL);");
+            banco.execSQL("CREATE TABLE if not exists distancia_pontos (id_frase INTEGER NOT NULL, DISTANCIA double NOT NULL);");
             atualizaLocal();
             Cursor cursor_ocorencia = banco.rawQuery("SELECT id_frase, latitude, longitude FROM ocorrencia",null);
             cursor_ocorencia.moveToFirst();
-            while (cursor_ocorencia!=null) {
-                int id = cursor_ocorencia.getInt(cursor_ocorencia.getColumnIndex("id"));
-                double latitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("latitude"));
-                double longitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("longitude"));
-                banco.execSQL("INSERT INTO distancia_pontos(id_frase, DISTANCIA) VALUES (" + id + "," + calculoDistancia(latitude, longitude, lastLocation.getLatitude(), lastLocation.getLongitude()) + ");");
+            try {
+                while (cursor_ocorencia != null) {
+                    int id = cursor_ocorencia.getInt(cursor_ocorencia.getColumnIndex("id_frase"));
+                    double latitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("latitude"));
+                    double longitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("longitude"));
+                    banco.execSQL("INSERT INTO distancia_pontos(id_frase, DISTANCIA) VALUES (" + id + "," + calculoDistancia(latitude, longitude, lastLocation.getLatitude(), lastLocation.getLongitude()) + ");");
+                    cursor_ocorencia.moveToNext();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
 
-            banco.execSQL("INSERT INTO `pontuacao`(`id_frase`) select id from frases;");
+            banco.execSQL("INSERT INTO pontuacao(id_frase, frase) select id, frase from frases;");
 
             banco.execSQL("UPDATE pontuacao SET pontos=pontos + 30 where EXISTS (SELECT id_frase FROM distancia_pontos WHERE id_frase = pontuacao.id_frase and distancia_pontos.DISTANCIA <= 1)");
 
@@ -336,18 +396,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 //independente se tem ou não a distancia precisa ser atualizada pra ser adicionada na tabela de ocorrencias
                 atualizaLocal();
                 int id = 0;
-                Cursor cursor = banco.rawQuery("SELECT id FROM frases where frase = '" + texto + "'", null);
-                cursor.moveToFirst();
-                id = cursor.getInt(cursor.getColumnIndex("id"));
-
+                try {
+                    Cursor cursor = banco.rawQuery("SELECT id FROM frases where frase = '" + texto + "'", null);
+                    cursor.moveToFirst();
+                    id = cursor.getInt(cursor.getColumnIndex("id"));
+                }catch (Exception e){
+                    Log.e("Erro id", e.toString());
+                }
                 // se tem a frase igual a essa e se não tem
                 //tem: pega o id e adiciona em ocorencias
                 if(id != 0){
                     Toast.makeText(this, "A frase '" + texto + " já consta na lista", Toast.LENGTH_SHORT).show();
                 } else {
-                    banco.execSQL("INSERT INTO frases(frase) VALUES ('" + texto + "');");
-                    banco.execSQL("INSERT INTO ocorrencia(id_frase, latitude, longitude, dia_hora) VALUES (" + idUltimaOcorencia() + ","+ lastLocation.getLatitude() +","+ lastLocation.getLongitude() +",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
-                    recuperarFrases();
+                    try {
+                        banco.execSQL("INSERT INTO frases(frase) VALUES ('" + texto + "');");
+                        banco.execSQL("INSERT INTO ocorrencia(id_frase, latitude, longitude, dia_hora) VALUES (" + idUltimaOcorencia() + "," + lastLocation.getLatitude() + "," + lastLocation.getLongitude() + ",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
+                        recuperarFrases();
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+
                     Toast.makeText(this, "FRASE SALVA!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -362,9 +430,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
 
     public int idUltimaOcorencia(){
-        Cursor cursor1 = banco.rawQuery("SELECT MAX(id) AS id FROM frases", null);
-        cursor1.moveToFirst();
-        return cursor1.getInt(cursor1.getColumnIndex("id"));
+        int id = 1;
+        try {
+            Cursor cursor1 = banco.rawQuery("SELECT MAX(id) AS id FROM frases", null);
+            cursor1.moveToFirst();
+            id = cursor1.getInt(cursor1.getColumnIndex("id"));
+        }catch (Exception e){
+            Log.e("ultimo id", e.toString());
+        }
+        return id;
     }
 
 
