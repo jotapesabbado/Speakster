@@ -3,6 +3,7 @@ package com.speakforme.joo.speakforme;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected GoogleApiClient googleApiClient;
     protected Location lastLocation;
     private FusedLocationProviderClient fusedLocationProviderClient;
+    public static final String MY_PREFS_NAME = "MyPrefsFile";
 
 
     private boolean CONFIGURACOES_ALTERADAS =false;
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        criarBanco();
 
         // LOGO DA ACTION BAR
        // getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -130,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .build();
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        atualizaLocal();
+
 
         //DIALOGO
      //   dialogo = new Dialog(this);
@@ -148,9 +153,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         frases = new ArrayList<String>();
      //   confirma_exclusao = new Dialog(this);
 
+//        try {
+//            sleep(1500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//
 
-        criarBanco();
         recuperarFrases();
+
+//        Thread thread = new Thread() {
+//            @Override
+//            public void run() {
+//                try {
+//                    atualizaLocal();
+//                    sleep(1500);
+//                    recuperarFrases();
+//                } catch (InterruptedException e){
+//                    e.printStackTrace();
+//                }
+//            }
+//        };
+//
+//        thread.start();
+
+//        criarBanco();
+//        recuperarFrases();
+
+
+
+
 
 
    /*    botaoConf.setOnClickListener(new View.OnClickListener() {
@@ -229,7 +261,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     int idAtual = ids.get(position);
                     Cursor cursor = banco.rawQuery("SELECT * FROM frases WHERE id=" + idAtual + "", null);
                     cursor.moveToFirst();
-                    banco.execSQL("INSERT INTO `ocorrencia`(`id_frase`, `latitude`, `longitude`, `dia_hora`) VALUES (" + idAtual + ","+ lastLocation.getLatitude() +","+ lastLocation.getLongitude() +",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
+                    double latitude = 0;
+                    double longitude = 0;
+                    if(lastLocation != null){
+                        latitude = lastLocation.getLatitude();
+                        longitude = lastLocation.getLongitude();
+                    }
+                    banco.execSQL("INSERT INTO ocorrencia(id_frase, latitude, longitude, dia_hora) VALUES (" + idAtual + ","+ latitude +","+ longitude +",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
                     String texto = cursor.getString(cursor.getColumnIndex("frase"));
                     textToSpeech.speak(texto, TextToSpeech.QUEUE_FLUSH, null);
                     recuperarFrases();
@@ -262,35 +300,49 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     }
 
-    public double calcMedia(ArrayList<Double> unix){
-        double totalSoma = 0;
-        for(Double valor : unix) {
-            totalSoma += valor;
+    public long calcMedia(ArrayList<Integer> unix){
+        long totalSoma = 0;
+        int valor = 0;
+        //MUDAR PRA ARRAY!!!! E NÃO ARRAY LIST
+        try {
+            for (int i = 0; i <= unix.size(); i++) {
+                valor = unix.get(i);
+                totalSoma = totalSoma + valor;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+//        for(Integer valor : unix) {
+//            totalSoma = totalSoma + valor;
+//        }
         return totalSoma / unix.size();
     }
-    public double calcDesvioPadrao(ArrayList<Double> unix, String type){
-        double potencia = 0;
-        double totalPotencia = 0;
-        double dp = 0;
-        double media = calcMedia(unix);
-        double valorFinal = 0;
+    public long calcDesvioPadrao(ArrayList<Integer> unix, String type){
+        int potencia = 0;
+        int totalPotencia = 0;
+        int dp = 0;
+        long media = calcMedia(unix);
+        long valorFinal = 0;
 
-        for(Double valor : unix) {
-            potencia = Math.pow(valor - media,2);
+        for(int valor : unix) {
+            potencia = (int) Math.pow(valor - media,2);
             totalPotencia += potencia / unix.size();
         }
 
-        dp = Math.sqrt(totalPotencia);
+        dp = (int) Math.sqrt(totalPotencia);
         switch(type) {
             case "DP":
                 valorFinal = dp;
+                break;
             case "MA":
                 valorFinal = media;
+                break;
             case "INICIO":
                 valorFinal = media - dp;
+                break;
             case "FIM":
                 valorFinal = media + dp;
+                break;
 
         }
     return valorFinal;
@@ -300,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void recuperarFrases(){
         try{
             adapter = new MyListAdapter(this,R.layout.list_adapter,frases);
+//            listView.setAdapter(null);
             listView.setAdapter(adapter);
             //adapter = new ArrayAdapter<String>(getApplicationContext(),R.layout.list_adapter, R.id.texto1,frases);
             //listView.setAdapter(new MyListAdapter(this,R.layout.list_adapter,frases));
@@ -312,22 +365,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             banco.execSQL("CREATE TABLE intervalo AS SELECT id_frase, strftime('%H:%M:%S',dia_hora)AS HORA , CAST(strftime('%s',dia_hora)AS INTEGER) AS UNIX, CAST(strftime('%w',dia_hora)AS INTEGER) AS DIA FROM ocorrencia GROUP BY id HAVING UNIX BETWEEN ((strftime('%s', 'now') - 10800) - 7200) AND ((strftime('%s', 'now') - 10800) + 7200) AND DIA=strftime('%w',datetime(strftime('%s', 'now') - 10800,'unixepoch'));");
 
-//            Cursor tabelaOcorencia = banco.rawQuery("SELECT * FROM intervalo",null);
-//            tabelaOcorencia.moveToFirst();
-//            while (tabelaOcorencia!=null){
-//                Log.e("id_frase",":"+tabelaOcorencia.getInt(tabelaOcorencia.getColumnIndex("id_frase")));
-//                Log.e("HORA",":"+tabelaOcorencia.getDouble(tabelaOcorencia.getColumnIndex("HORA")));
-//                Log.e("UNIX",":"+tabelaOcorencia.getDouble(tabelaOcorencia.getColumnIndex("UNIX")));
-//                Log.e("DIA",":"+tabelaOcorencia.getInt(tabelaOcorencia.getColumnIndex("DIA")));
-//                tabelaOcorencia.moveToNext();
-//            }
             banco.execSQL("create table if not exists intervalo_dp (DP DOUBLE NOT NULL, MA TIMESTAMP NOT NULL,FIM TIMESTAMP NOT NULL, INICIO TIMESTAMP NOT NULL )");
             Cursor cursor_intervalo = banco.rawQuery("SELECT UNIX FROM intervalo",null);
             cursor_intervalo.moveToFirst();
-            ArrayList<Double> unix = new ArrayList<>();
+            ArrayList<Integer> unix = new ArrayList<>();
             try {
                 while (cursor_intervalo != null) {
-                    unix.add(cursor_intervalo.getDouble(cursor_intervalo.getColumnIndex("UNIX")));
+                    unix.add(cursor_intervalo.getInt(cursor_intervalo.getColumnIndex("UNIX")));
                     cursor_intervalo.moveToNext();
                 }
             }catch (Exception e){
@@ -336,7 +380,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             banco.execSQL("INSERT INTO intervalo_dp(DP, MA, INICIO, FIM) VALUES ("+ calcDesvioPadrao(unix,"DP")+",DATETIME(" + calcDesvioPadrao(unix,"MA") + ", 'unixepoch', 'localtime'),DATETIME(" + calcDesvioPadrao(unix,"INICIO") + ", 'unixepoch', 'localtime'),DATETIME(" + calcDesvioPadrao(unix,"FIM") + ", 'unixepoch', 'localtime'))");
 
             banco.execSQL("CREATE TABLE if not exists ocorrencia_id (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, maior_id INTEGER NOT NULL);");
-            banco.execSQL("INSERT INTO ocorrencia_id(maior_id) SELECT id as maior_id FROM ocorrencia group by id_frase having count(*) = (SELECT count(id_frase) as maior FROM ocorrencia GROUP BY id_frase order by maior desc limit 1);");
+            banco.execSQL("INSERT INTO ocorrencia_id(maior_id) SELECT id_frase as maior_id FROM ocorrencia group by id_frase having count(*) = (SELECT count(id_frase) as maior FROM ocorrencia GROUP BY id_frase order by maior desc limit 1);");
 
             banco.execSQL("CREATE TABLE if not exists pontos_hora (pontos INTEGER DEFAULT 10, HORA NOT NULL, id_frase INTEGER NOT NULL);");
             banco.execSQL("INSERT INTO pontos_hora(HORA, id_frase) SELECT intervalo.HORA, intervalo.id_frase FROM intervalo,intervalo_dp WHERE intervalo.UNIX BETWEEN strftime('%s',intervalo_dp.INICIO) AND strftime('%s',intervalo_dp.FIM)");
@@ -351,24 +395,89 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             try {
                 while (cursor_ocorencia != null) {
                     int id = cursor_ocorencia.getInt(cursor_ocorencia.getColumnIndex("id_frase"));
-                    double latitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("latitude"));
-                    double longitude = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("longitude"));
-                    banco.execSQL("INSERT INTO distancia_pontos(id_frase, DISTANCIA) VALUES (" + id + "," + calculoDistancia(latitude, longitude, lastLocation.getLatitude(), lastLocation.getLongitude()) + ");");
+                    double latitude_antiga = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("latitude"));
+                    double longitude_antiga = cursor_ocorencia.getDouble(cursor_ocorencia.getColumnIndex("longitude"));
+                    double latitude = 0;
+                    double longitude = 0;
+                    SharedPreferences prefs = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+
+                    if(lastLocation != null){
+                        latitude = lastLocation.getLatitude();
+                        longitude = lastLocation.getLongitude();
+                    }else{
+                        latitude = prefs.getFloat("lat", 0);
+                        longitude = prefs.getFloat("long", 0);
+                        Log.e("LAT",":"+prefs.getFloat("lat", 0));
+                        Log.e("LAT",":"+prefs.getFloat("long", 0));
+                    }
+                    banco.execSQL("INSERT INTO distancia_pontos(id_frase, DISTANCIA) VALUES (" + id + "," + calculoDistancia(latitude_antiga, longitude_antiga, latitude, longitude) + ");");
                     cursor_ocorencia.moveToNext();
                 }
             }catch (Exception e){
                 e.printStackTrace();
             }
 
+            banco.execSQL("drop table if exists pontuacao;");
+
+            banco.execSQL("create table if not exists pontuacao (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, id_frase INTEGER NOT NULL, frase VARCHAR(1000) NOT NULL, pontos INTEGER NOT NULL DEFAULT 0, CONSTRAINT fk_id_frase FOREIGN KEY (id_frase) REFERENCES frases(id) ON DELETE CASCADE);");
+
             banco.execSQL("INSERT INTO pontuacao(id_frase, frase) select id, frase from frases;");
 
-            banco.execSQL("UPDATE pontuacao SET pontos=pontos + 30 where EXISTS (SELECT id_frase FROM distancia_pontos WHERE id_frase = pontuacao.id_frase and distancia_pontos.DISTANCIA <= 1)");
+            banco.execSQL("UPDATE pontuacao SET pontos=pontos + 30 where EXISTS (SELECT id_frase FROM distancia_pontos WHERE id_frase = pontuacao.id_frase and distancia_pontos.DISTANCIA BETWEEN 0 AND 1)");
 
             banco.execSQL("UPDATE pontuacao SET pontos=pontos + 9 where EXISTS (SELECT pontos FROM ocorrencia_id WHERE maior_id = pontuacao.id_frase)");
 
             banco.execSQL("UPDATE pontos_hora SET pontos=pontos + (select pontos from pontos_hora_a) where EXISTS (SELECT pontos FROM pontos_hora_a WHERE id_frase = pontos_hora.id_frase)");
 
             banco.execSQL("UPDATE pontuacao SET pontos=pontos + (select pontos from pontos_hora  WHERE id_frase = pontuacao.id_frase) where EXISTS (SELECT pontos FROM pontos_hora WHERE id_frase = pontuacao.id_frase)");
+
+
+            //teste TABELA PONTUAÇÃO
+            Log.e("Pontuacao","Tabela pontuação");
+            Cursor t1 = banco.rawQuery("SELECT * FROM pontuacao ORDER BY pontos DESC",null);
+            t1.moveToFirst();
+            try {
+                while (t1 != null) {
+                    Log.e("id", ":" + t1.getInt(t1.getColumnIndex("id")));
+                    Log.e("id_frase", ":" + t1.getInt(t1.getColumnIndex("id_frase")));
+                    Log.e("frase", ":" + t1.getString(t1.getColumnIndex("frase")));
+                    Log.e("pontos", ":" + t1.getInt(t1.getColumnIndex("pontos")));
+                    t1.moveToNext();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+            //teste TABELA OCOR_ID
+            Log.e("OCOR_ID","Tabela OCOR_ID");
+            Cursor t2 = banco.rawQuery("SELECT * FROM ocorrencia_id",null);
+            t2.moveToFirst();
+            try {
+                while (t2 != null) {
+                    Log.e("id", ":" + t2.getInt(t2.getColumnIndex("id")));
+                    Log.e("maior_id", ":" + t2.getInt(t2.getColumnIndex("maior_id")));
+                    t2.moveToNext();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            //teste TABELA OCORRENCIAS
+            Log.e("OCORRENCIAS","Tabela OCORRENCIAS");
+            Cursor t3 = banco.rawQuery("SELECT * FROM ocorrencia",null);
+            t3.moveToFirst();
+            try {
+                while (t3 != null) {
+                    Log.e("id", ":" + t3.getInt(t3.getColumnIndex("id")));
+                    Log.e("id_frase", ":" + t3.getInt(t3.getColumnIndex("id_frase")));
+                    Log.e("latitude", ":" + t3.getInt(t3.getColumnIndex("latitude")));
+                    Log.e("longitude", ":" + t3.getInt(t3.getColumnIndex("longitude")));
+                    Log.e("dia_hora", ":" + t3.getBlob(t3.getColumnIndex("dia_hora")));
+                    t3.moveToNext();
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
 
             frases.clear();
             ids.clear();
@@ -410,7 +519,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 } else {
                     try {
                         banco.execSQL("INSERT INTO frases(frase) VALUES ('" + texto + "');");
-                        banco.execSQL("INSERT INTO ocorrencia(id_frase, latitude, longitude, dia_hora) VALUES (" + idUltimaOcorencia() + "," + lastLocation.getLatitude() + "," + lastLocation.getLongitude() + ",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
+                        double latitude = 0;
+                        double longitude = 0;
+                        if(lastLocation != null){
+                            latitude = lastLocation.getLatitude();
+                            longitude = lastLocation.getLongitude();
+                        }
+                        banco.execSQL("INSERT INTO ocorrencia(id_frase, latitude, longitude, dia_hora) VALUES (" + idUltimaOcorencia() + "," + latitude + "," + longitude + ",dateTIME(strftime('%s', 'now'),'unixepoch','localtime'));");
                         recuperarFrases();
                     }catch (Exception e){
                         e.printStackTrace();
@@ -530,6 +645,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         banco.execSQL("delete from frases where frase=('" + frases.get(posicao) + "')");
+                        banco.execSQL("delete from ocorrencia where id_frase=('" + ids.get(posicao) + "')");
                         adapter.clear();
                         recuperarFrases();
                     }
@@ -583,13 +699,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             if (location != null) {
                                 // Logic to handle location object
                                 lastLocation = location;
-                                getLocation(location);
+                                SharedPreferences.Editor editor = getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE).edit();
+                                editor.putFloat("lat", (float) lastLocation.getLatitude());
+                                editor.putFloat("long", (float) lastLocation.getLongitude());
+                                editor.commit();
 
                             }
                         }
                     });
         }
-    }
+     }
+
+
 
     private void requestPermission() {
 
@@ -607,21 +728,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         Log.e("MainActivity", "Connection suspendedd");
     }
 
-    public void getLocation(Location location){
-        teste.setText(String.valueOf(location.getLatitude())+""+String.valueOf(location.getLongitude()));
-
-
-    }
-
     public void atualizaLocal(){
         fusedLocationProviderClient.flushLocations();
         if(googleApiClient.isConnected())googleApiClient.disconnect();
         googleApiClient.connect();
-        Toast.makeText(getApplicationContext(), "teste2", Toast.LENGTH_SHORT).show();
-
     }
 
     public double calculoDistancia(double lat1, double lon1, double lat2, double lon2) {
+        if(lat1 == 0 || lon1 == 0 || lat2 == 0 || lon2 == 0){
+            return 999;
+        }
+
         double R = 6372.8; // In kilometers
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
@@ -632,5 +749,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         double c = Math.asin(Math.sqrt(a));
         return 2*R * c;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        atualizaLocal();
+        recuperarFrases();
+    }
+
+
 
 }

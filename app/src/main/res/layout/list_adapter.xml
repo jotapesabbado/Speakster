@@ -22,6 +22,14 @@
         android:textColor="@color/White"
         android:textSize="@dimen/listtext" />
 
+    <!--<TextView-->
+        <!--android:id="@+id/texto_pontos"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/texto_lista"-->
+        <!--android:textColor="@color/White"-->
+        <!--android:textSize="@dimen/listtext" />-->
+
     <ImageButton
         android:id="@+id/delete_lista"
         android:layout_width="wrap_content"
